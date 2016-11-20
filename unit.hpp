@@ -52,7 +52,7 @@ class Unit {
   constexpr
   Unit<ValueType, S + Time, M + Distance, C + Luminance, K + Temperature, Rad + Radians, A + Amperes, KG + Mass, 
        std::ratio<Num * Num2, Denom * Denom2>::num, std::ratio<Num * Num2, Denom * Denom2>::den>
-  operator*(const Unit<ValueType, S, M, C, K, Rad, A, KG, Num2, Denom2> other) const {
+  operator*(const Unit<ValueType, S, M, C, K, Rad, A, KG, Num2, Denom2>& other) const {
     return {value_ * other.GetValue()};
   }
 
@@ -67,8 +67,20 @@ class Unit {
   constexpr
   Unit<ValueType, Time - S, Distance - M, Luminance + C, Temperature + K, Radians + Rad, Amperes + A, Mass + KG,
        std::ratio<Num * Denom2, Denom * Num2>::num, std::ratio<Num * Denom2, Denom * Num2>::den>
-  operator/(const Unit<ValueType, S, M, C, K, Rad, A, KG, Num2, Denom2> other) const {
+  operator/(const Unit<ValueType, S, M, C, K, Rad, A, KG, Num2, Denom2>& other) const {
     return {value_ / other.GetValue()};
+  }
+
+  constexpr Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>
+  operator+(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>&
+      other) const {
+    return {value_ + other.value_};
+  }
+
+  constexpr Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>
+  operator-(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>&
+      other) const {
+    return {value_ - other.value_};
   }
 
  private:
