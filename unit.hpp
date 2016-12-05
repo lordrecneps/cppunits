@@ -9,6 +9,8 @@
 #include <ratio>
 #include <type_traits>
 
+namespace units {
+
 /**
  * @~english
  * @brief Constexpr ready class for expressing SI units. Supports basic arithmetic.
@@ -176,4 +178,57 @@ class Unit {
    */
   ValueType value_;
 };
+
+#define DEFINE_BASE(type) \
+using Second = Unit<type, 1, 0, 0, 0, 0, 0, 0, 1, 1>; \
+using Meter = Unit<type, 0, 1, 0, 0, 0, 0, 0, 1, 1>;  \
+using Candela = Unit<type, 0, 0, 1, 0, 0, 0, 0, 1, 1>;\
+using Kelvin = Unit<type, 0, 0, 0, 1, 0, 0, 0, 1, 1>; \
+using Radian = Unit<type, 0, 0, 0, 0, 1, 0, 0, 1, 1>; \
+using Ampere = Unit<type, 0, 0, 0, 0, 0, 1, 0, 1, 1>; \
+using Gram = Unit<type, 0, 0, 0, 0, 0, 0, 1, 1, 1>;
+
+
+#define DEFINE_PREFIX(type, name, num, denom) \
+using name##second = Unit<type, 1, 0, 0, 0, 0, 0, 0, num, denom>;  \
+using name##meter = Unit<type, 0, 1, 0, 0, 0, 0, 0, num, denom>;   \
+using name##candela = Unit<type, 0, 0, 1, 0, 0, 0, 0, num, denom>; \
+using name##kelvin = Unit<type, 0, 0, 0, 1, 0, 0, 0, num, denom>;  \
+using name##radian = Unit<type, 0, 0, 0, 0, 1, 0, 0, num, denom>;  \
+using name##ampere = Unit<type, 0, 0, 0, 0, 0, 1, 0, num, denom>;  \
+using name##gram = Unit<type, 0, 0, 0, 0, 0, 0, 1, num, denom>;
+
+#define DEFINE_PREFIXES(type) \
+DEFINE_PREFIX(type, Atto, 1, 1000000000000000000) \
+DEFINE_PREFIX(type, Femto, 1, 1000000000000000) \
+DEFINE_PREFIX(type, Pico, 1, 1000000000000) \
+DEFINE_PREFIX(type, Nano, 1, 1000000000) \
+DEFINE_PREFIX(type, Micro, 1, 1000000) \
+DEFINE_PREFIX(type, Milli, 1, 1000) \
+DEFINE_PREFIX(type, Centi, 1, 100) \
+DEFINE_PREFIX(type, Deci, 1, 10) \
+DEFINE_PREFIX(type, Deca, 10, 1) \
+DEFINE_PREFIX(type, Hecto, 100, 1) \
+DEFINE_PREFIX(type, Kilo, 1000, 1) \
+DEFINE_PREFIX(type, Mega, 1000000, 1) \
+DEFINE_PREFIX(type, Giga, 1000000000, 1) \
+DEFINE_PREFIX(type, Tera, 1000000000000, 1) \
+DEFINE_PREFIX(type, Peta, 1000000000000000, 1) \
+DEFINE_PREFIX(type, Exa,  1000000000000000000, 1)
+
+namespace i {
+
+DEFINE_BASE(int64_t)
+DEFINE_PREFIXES(int64_t)
+
+}  // namespace int
+
+namespace d {
+
+DEFINE_BASE(double)
+DEFINE_PREFIXES(double)
+
+}
+
+}  // namespace units
 
