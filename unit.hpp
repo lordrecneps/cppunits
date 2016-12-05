@@ -179,6 +179,11 @@ class Unit {
   ValueType value_;
 };
 
+/**
+ * @~english
+ * Defines all the base SI units with the given arithmetic type.
+ * @param type The arithmetic type used to store the value of the unit.
+ */
 #define DEFINE_BASE(type) \
 using Second = Unit<type, 1, 0, 0, 0, 0, 0, 0, 1, 1>; \
 using Meter = Unit<type, 0, 1, 0, 0, 0, 0, 0, 1, 1>;  \
@@ -188,7 +193,14 @@ using Radian = Unit<type, 0, 0, 0, 0, 1, 0, 0, 1, 1>; \
 using Ampere = Unit<type, 0, 0, 0, 0, 0, 1, 0, 1, 1>; \
 using Gram = Unit<type, 0, 0, 0, 0, 0, 0, 1, 1, 1>;
 
-
+/**
+ * @~english
+ * Defines all the base SI units with the given prefix
+ * @param type The arithmetic type used to store the value of the unit.
+ * @param name The name of the prefix
+ * @param num The numerator of the fraction represented by this prefix
+ * @param num The denominator of the fraction represented by this prefix
+ */
 #define DEFINE_PREFIX(type, name, num, denom) \
 using name##second = Unit<type, 1, 0, 0, 0, 0, 0, 0, num, denom>;  \
 using name##meter = Unit<type, 0, 1, 0, 0, 0, 0, 0, num, denom>;   \
@@ -198,6 +210,11 @@ using name##radian = Unit<type, 0, 0, 0, 0, 1, 0, 0, num, denom>;  \
 using name##ampere = Unit<type, 0, 0, 0, 0, 0, 1, 0, num, denom>;  \
 using name##gram = Unit<type, 0, 0, 0, 0, 0, 0, 1, num, denom>;
 
+/**
+ * @~english
+ * Defines all the prefixes for all base SI units that can fit in 64-bit types
+ * @param type The arithmetic type used to store the value of the unit.
+ */
 #define DEFINE_PREFIXES(type) \
 DEFINE_PREFIX(type, Atto, 1, 1000000000000000000) \
 DEFINE_PREFIX(type, Femto, 1, 1000000000000000) \
@@ -216,19 +233,28 @@ DEFINE_PREFIX(type, Tera, 1000000000000, 1) \
 DEFINE_PREFIX(type, Peta, 1000000000000000, 1) \
 DEFINE_PREFIX(type, Exa,  1000000000000000000, 1)
 
+
 namespace i {
 
+/**
+ * @~english
+ * All int64-based SI units
+ */
 DEFINE_BASE(int64_t)
 DEFINE_PREFIXES(int64_t)
 
-}  // namespace int
+}  // namespace i
 
 namespace d {
 
+/**
+ * @~english
+ * All double-based SI units
+ */
 DEFINE_BASE(double)
 DEFINE_PREFIXES(double)
 
-}
+}  // namespace d
 
 }  // namespace units
 
