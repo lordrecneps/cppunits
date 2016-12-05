@@ -40,6 +40,10 @@ class Unit {
    * @return value with the given units.
    */
   constexpr ValueType GetValue() const noexcept { return value_; }
+
+  bool operator==(const Unit& other) const noexcept {
+    return value_ == other.value_;
+  }
   
   /**
    * @~english
@@ -58,6 +62,52 @@ class Unit {
 
   /**
    * @~english
+   * Constant multiplication operator
+   * @param other The constant to multiply by
+   * @return A new unit muliplied by the given constant
+   */
+  template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<bool, T>::value>::type>
+  constexpr Unit operator*(T c) {
+    return Unit(value_ * c);
+  }
+
+  /**
+   * @~english
+   * Constant multiplication assignment operator
+   * @param other The constant to multiply by
+   * @return A reference to the unit after muliplication by the given constant
+   */
+  template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<bool, T>::value>::type>
+  constexpr Unit& operator*=(T c) {
+    value_ *= c;
+    return *this;
+  }
+
+  /**
+   * @~english
+   * Constant division operator
+   * @param other The constant to divide by
+   * @return A new unit divided by the given constant
+   */
+  template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<bool, T>::value>::type>
+  constexpr Unit operator/(T c) {
+    return Unit(value_ / c);
+  }
+
+  /**
+   * @~english
+   * Constant division assignment operator
+   * @param other The constant to divide by
+   * @return A reference to the unit after division by the given constant
+   */
+  template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<bool, T>::value>::type>
+  constexpr Unit& operator/=(T c) {
+    value_ /= c;
+    return *this;
+  }
+
+  /**
+   * @~english
    * Division operator
    * @param other The value to divide by
    * @return A new unit class with the divided units and value
@@ -71,16 +121,46 @@ class Unit {
     return {value_ / other.GetValue()};
   }
 
-  constexpr Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>
-  operator+(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>&
-      other) const {
+  /**
+   * @~english
+   * Addition operator
+   * @param other The amount to add by
+   * @return New unit with the result of the addition
+   */
+  constexpr Unit operator+(const Unit& other) const {
     return {value_ + other.value_};
   }
 
-  constexpr Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>
-  operator-(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num, Denom>&
-      other) const {
+  /**
+   * @~english
+   * Addition assignment operator
+   * @param other The amount to add by
+   * @return Reference to the unit after addition
+   */
+  constexpr Unit& operator+=(const Unit& other) const {
+    value_ += other.value_;
+    return *this;
+  }
+
+  /**
+   * @~english
+   * Constant subtraction operator
+   * @param other The amoutn to subtract by
+   * @return A new unit with the result of the subtraction
+   */
+  constexpr Unit operator-(const Unit& other) const {
     return {value_ - other.value_};
+  }
+
+  /**
+   * @~english
+   * Subtraction assignment operator
+   * @param other The amount to subtract by
+   * @return Reference to the unit after subtraction
+   */
+  constexpr Unit& operator-=(const Unit& other) const {
+    value_ -= other.value_;
+    return *this;
   }
 
  private:
