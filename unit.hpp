@@ -49,6 +49,38 @@ class Unit {
     return value_ * s::num == other.GetValue() * s::den;
   }
 
+  template <size_t Num2, size_t Denom2>
+  bool operator!=(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
+      other) const noexcept {
+    return !(*this == other);
+  }
+
+  template <size_t Num2, size_t Denom2>
+  bool operator<(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
+      other) const noexcept {
+    using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
+    return value_ * s::num < other.GetValue() * s::den;
+  }
+
+  template <size_t Num2, size_t Denom2>
+  bool operator>(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
+      other) const noexcept {
+    using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
+    return value_ * s::num > other.GetValue() * s::den;
+  }
+
+  template <size_t Num2, size_t Denom2>
+  bool operator>=(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
+      other) const noexcept {
+    return !(*this < other);
+  }
+
+  template <size_t Num2, size_t Denom2>
+  bool operator<=(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
+      other) const noexcept {
+    return !(*this > other);
+  }
+
   /**
    * @~english
    * Multiplication operator
