@@ -38,6 +38,12 @@ class Unit {
    */
   constexpr Unit(ValueType value) : value_(value) {}
 
+  template <size_t Num2, size_t Den2>
+  operator units<Num2, Den2>() const noexcept {
+    using s = std::ratio_divide<units<Num2, Den2>::scale, scale>;
+    return units<Num2, Den2>(s.num * value_ / s.den);
+  }
+
   /**
    * @~english
    * Gets the value with the given units.
