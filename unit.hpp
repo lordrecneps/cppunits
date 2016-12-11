@@ -24,6 +24,12 @@ class Unit {
 
   /**
    * @~english
+   * The scale of the unit. E.g. cm, mm, etc.
+   */
+  using scale = std::ratio<Num, Denom>;
+
+  /**
+   * @~english
    * Value constructor
    * @param value The value with the given units.
    */
@@ -31,32 +37,28 @@ class Unit {
 
   /**
    * @~english
-   * Gets the scale for the given units.
-   * @return The scale of the units.
-   */
-  constexpr std::ratio<Num, Denom> GetScale() const noexcept { return scale_; }
-  
-  /**
-   * @~english
    * Gets the value with the given units.
    * @return value with the given units.
    */
   constexpr ValueType GetValue() const noexcept { return value_; }
 
-  bool operator==(const Unit& other) const noexcept {
-    return value_ == other.value_;
+  template <size_t Num2, size_t Denom2>
+  bool operator==(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
+      other) const noexcept {
+    using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
+    return value_ * s::num == other.GetValue() * s::den;
   }
-  
+
   /**
    * @~english
    * Multiplication operator
    * @param other The value to multiply by
    * @return A new unit class with the multiplied units and value
    */
-  template <int32_t S, int32_t M, int32_t C, int32_t K, int32_t Rad, int32_t A, int32_t KG, size_t Num2, 
+  template <int32_t S, int32_t M, int32_t C, int32_t K, int32_t Rad, int32_t A, int32_t KG, size_t Num2,
             size_t Denom2>
   constexpr
-  Unit<ValueType, S + Time, M + Distance, C + Luminance, K + Temperature, Rad + Radians, A + Amperes, KG + Mass, 
+  Unit<ValueType, S + Time, M + Distance, C + Luminance, K + Temperature, Rad + Radians, A + Amperes, KG + Mass,
        std::ratio<Num * Num2, Denom * Denom2>::num, std::ratio<Num * Num2, Denom * Denom2>::den>
   operator*(const Unit<ValueType, S, M, C, K, Rad, A, KG, Num2, Denom2>& other) const {
     return {value_ * other.GetValue()};
@@ -114,7 +116,7 @@ class Unit {
    * @param other The value to divide by
    * @return A new unit class with the divided units and value
    */
-  template <int32_t S, int32_t M, int32_t C, int32_t K, int32_t Rad, int32_t A, int32_t KG, size_t Num2, 
+  template <int32_t S, int32_t M, int32_t C, int32_t K, int32_t Rad, int32_t A, int32_t KG, size_t Num2,
             size_t Denom2>
   constexpr
   Unit<ValueType, Time - S, Distance - M, Luminance + C, Temperature + K, Radians + Rad, Amperes + A, Mass + KG,
@@ -166,12 +168,6 @@ class Unit {
   }
 
  private:
-  /**
-   * @~english
-   * The scale of the unit. E.g. cm, mm, etc.
-   */
-  std::ratio<Num, Denom> scale_;
-
   /**
    * @~english
    * The unit value.
