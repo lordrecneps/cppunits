@@ -28,6 +28,9 @@ class Unit {
    */
   using scale = std::ratio<Num, Denom>;
 
+  template <size_t Num2, size_t Den2>
+  using units = Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>
+
   /**
    * @~english
    * Value constructor
