@@ -1,37 +1,42 @@
+#define CATCH_CONFIG_MAIN
+#include "test/catch.hpp"
+
 #include <iostream>
 
 #include "unit.hpp"
 
 using namespace units;
 
-int main(int argc, char** argv) {
-  Unit<double, 0, 0, 0, 0, 0, 0, 0, 5, 7> test1(2.0);
-  Unit<double, 0, 0, 0, 0, 0, 0, 0, 2, 3> test2(3.0);
-  auto test = test1 * test2;
-  std::cout << "mul " << decltype(test)::scale::num << "/" << decltype(test)::scale::den << ", v " << test.GetValue() << std::endl;
-  auto best = test1 / test2;
-  std::cout << "div " << decltype(best)::scale::num << "/" << decltype(best)::scale::den << ", v " << best.GetValue() << std::endl;
+TEST_CASE( "Unit arithmetic") {
+  constexpr Unit<double, 0, 0, 0, 0, 0, 0, 0, 5, 7> t1(2.0);
+  constexpr Unit<double, 0, 0, 0, 0, 0, 0, 0, 2, 3> t2(3.0);
 
-  auto zest = test1 + test1;
-  std::cout << "add " << decltype(zest)::scale::num << "/" << decltype(zest)::scale::den << ", v " << zest.GetValue() << std::endl;
+  REQUIRE((t1 * t2).GetNum() == 10);
+  REQUIRE((t1 * t2).GetDen() == 21);
+  REQUIRE((t1 * t2).GetValue() == 6.0);
 
-  auto fest = test1 - test1;
-  std::cout << "sub " << decltype(fest)::scale::num << "/" << decltype(fest)::scale::den << ", v " << fest.GetValue() << std::endl;
+  REQUIRE((t1 / t2).GetNum() == 15);
+  REQUIRE((t1 / t2).GetDen() == 14);
+  REQUIRE((t1 / t2).GetValue() == (2.0 / 3.0));
 
-  i::Meter meter(100);
-  i::Second sec(1);
-  i::Kilogram kg(1);
-  i::Gram g(1000);
+  REQUIRE((t1 + t1).GetNum() == 5);
+  REQUIRE((t1 + t1).GetDen() == 7);
+  REQUIRE((t1 + t1).GetValue() == 4.0);
 
-  if (meter * sec * kg == Unit<int64_t, 1, 1, 0, 0, 0, 0, 1, 1000, 1>(100))
-    std::cout << "Pass" << std::endl;
-  else
-    std::cout << "Fail" << std::endl;
+  REQUIRE((t1 - t1).GetNum() == 5);
+  REQUIRE((t1 - t1).GetDen() == 7);
+  REQUIRE((t1 - t1).GetValue() == 0.0);
 
-  if (meter * sec * g == Unit<int64_t, 1, 1, 0, 0, 0, 0, 1, 1000, 1>(100))
-    std::cout << "Pass" << std::endl;
-  else
-    std::cout << "Fail" << std::endl;
-  return 0;
+  /*REQUIRE((t1 + t2).GetNum() == 29);
+  REQUIRE((t1 + t2).GetDen() == 21);
+  REQUIRE((t1 - t2).GetNum() == 29);
+  REQUIRE((t1 - t2).GetDen() == 21);*/
 
+  constexpr i::Meter meter(100);
+  constexpr i::Second sec(1);
+  constexpr i::Kilogram kg(1);
+  constexpr i::Gram g(1000);
+
+  REQUIRE((meter * sec * kg) == (Unit<int64_t, 1, 1, 0, 0, 0, 0, 1, 1000, 1>(100)));
+  REQUIRE((meter * sec * g) == (Unit<int64_t, 1, 1, 0, 0, 0, 0, 1, 1000, 1>(100)));
 }
