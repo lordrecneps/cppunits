@@ -9,6 +9,8 @@
 #include <ratio>
 #include <type_traits>
 
+#include "gcd.hpp"
+
 namespace units {
 
 /**
@@ -189,8 +191,13 @@ class Unit {
    * @param other The amount to add by
    * @return New unit with the result of the addition
    */
-  constexpr Unit operator+(const Unit& other) const {
-    return {value_ + other.value_};
+  template <size_t Num2, size_t Denom2, intmax_t N2 = Num2 / gcd(Num2, Denom2), intmax_t D2 = Denom2 / gcd(Num2, Denom2)>
+  constexpr units<gcd(scale::num, N2), lcm(scale::den, D2)>
+  operator+(const units<Num2, Denom2>& other) const {
+    using r = std::ratio<gcd(scale::num, N2), lcm(scale::den, D2)>;
+    using left = std::ratio_divide<scale, r>;
+    using right = std::ratio_divide<std::ratio<Num2, Denom2>, r>;
+    return {value_ * left::num / left::den + other.GetValue() * right::num / right::den};
   }
 
   /**
@@ -210,8 +217,13 @@ class Unit {
    * @param other The amoutn to subtract by
    * @return A new unit with the result of the subtraction
    */
-  constexpr Unit operator-(const Unit& other) const {
-    return {value_ - other.value_};
+  template <size_t Num2, size_t Denom2, intmax_t N2 = Num2 / gcd(Num2, Denom2), intmax_t D2 = Denom2 / gcd(Num2, Denom2)>
+  constexpr units<gcd(scale::num, N2), lcm(scale::den, D2)>
+  operator-(const units<Num2, Denom2>& other) const {
+    using r = std::ratio<gcd(scale::num, N2), lcm(scale::den, D2)>;
+    using left = std::ratio_divide<scale, r>;
+    using right = std::ratio_divide<std::ratio<Num2, Denom2>, r>;
+    return {value_ * left::num / left::den - other.GetValue() * right::num / right::den};
   }
 
   /**

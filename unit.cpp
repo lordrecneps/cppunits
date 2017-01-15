@@ -27,10 +27,13 @@ TEST_CASE( "Unit arithmetic") {
   REQUIRE((t1 - t1).GetDen() == 7);
   REQUIRE((t1 - t1).GetValue() == 0.0);
 
-  /*REQUIRE((t1 + t2).GetNum() == 29);
+  REQUIRE((t1 + t2).GetNum() == 1);
   REQUIRE((t1 + t2).GetDen() == 21);
-  REQUIRE((t1 - t2).GetNum() == 29);
-  REQUIRE((t1 - t2).GetDen() == 21);*/
+  REQUIRE((t1 + t2).GetValue() == 72.0);
+
+  REQUIRE((t1 - t2).GetNum() == 1);
+  REQUIRE((t1 - t2).GetDen() == 21);
+  REQUIRE((t1 - t2).GetValue() == -12.0);
 
   constexpr i::Meter meter(100);
   constexpr i::Second sec(1);
