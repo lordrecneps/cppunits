@@ -28,8 +28,12 @@ class Unit {
    */
   using scale = std::ratio<Num, Denom>;
 
+  /**
+   * @~english
+   * Unit type with identical units but different ratio.
+   */
   template <size_t Num2, size_t Den2>
-  using units = Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>
+  using units = Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Den2>;
 
   /**
    * @~english
@@ -38,11 +42,31 @@ class Unit {
    */
   constexpr Unit(ValueType value) : value_(value) {}
 
+  /**
+   * @~english
+   * Conversion operator to a different ratio.
+   * @return Unit with the same value and given ratio.
+   */
   template <size_t Num2, size_t Den2>
   operator units<Num2, Den2>() const noexcept {
-    using s = std::ratio_divide<units<Num2, Den2>::scale, scale>;
-    return units<Num2, Den2>(s.num * value_ / s.den);
+    using r = typename units<Num2, Den2>::scale;
+    using s = std::ratio_divide<r, scale>;
+    return units<Num2, Den2>(s::num * value_ / s::den);
   }
+
+  /**
+   * @~english
+   * Gets the numerator of the unit ratio
+   * @return The numerator
+   */
+  static constexpr size_t GetNum() noexcept { return scale::num; }
+
+  /**
+   * @~english
+   * Gets the denominator of the unit ratio
+   * @return The denominator
+   */
+  static constexpr size_t GetDen() noexcept { return scale::den; }
 
   /**
    * @~english
@@ -52,41 +76,35 @@ class Unit {
   constexpr ValueType GetValue() const noexcept { return value_; }
 
   template <size_t Num2, size_t Denom2>
-  bool operator==(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
-      other) const noexcept {
+  bool operator==(const units<Num2, Denom2>& other) const noexcept {
     using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
     return value_ * s::num == other.GetValue() * s::den;
   }
 
   template <size_t Num2, size_t Denom2>
-  bool operator!=(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
-      other) const noexcept {
+  bool operator!=(const units<Num2, Denom2>& other) const noexcept {
     return !(*this == other);
   }
 
   template <size_t Num2, size_t Denom2>
-  bool operator<(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
-      other) const noexcept {
+  bool operator<(const units<Num2, Denom2>& other) const noexcept {
     using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
     return value_ * s::num < other.GetValue() * s::den;
   }
 
   template <size_t Num2, size_t Denom2>
-  bool operator>(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
-      other) const noexcept {
+  bool operator>(const units<Num2, Denom2>& other) const noexcept {
     using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
     return value_ * s::num > other.GetValue() * s::den;
   }
 
   template <size_t Num2, size_t Denom2>
-  bool operator>=(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
-      other) const noexcept {
+  bool operator>=(const units<Num2, Denom2>& other) const noexcept {
     return !(*this < other);
   }
 
   template <size_t Num2, size_t Denom2>
-  bool operator<=(const Unit<ValueType, Time, Distance, Luminance, Temperature, Radians, Amperes, Mass, Num2, Denom2>&
-      other) const noexcept {
+  bool operator<=(const units<Num2, Denom2>& other) const noexcept {
     return !(*this > other);
   }
 
@@ -96,8 +114,7 @@ class Unit {
    * @param other The value to multiply by
    * @return A new unit class with the multiplied units and value
    */
-  template <int32_t S, int32_t M, int32_t C, int32_t K, int32_t Rad, int32_t A, int32_t KG, size_t Num2,
-            size_t Denom2>
+  template <int32_t S, int32_t M, int32_t C, int32_t K, int32_t Rad, int32_t A, int32_t KG, size_t Num2, size_t Denom2>
   constexpr
   Unit<ValueType, S + Time, M + Distance, C + Luminance, K + Temperature, Rad + Radians, A + Amperes, KG + Mass,
        std::ratio<Num * Num2, Denom * Denom2>::num, std::ratio<Num * Num2, Denom * Denom2>::den>
