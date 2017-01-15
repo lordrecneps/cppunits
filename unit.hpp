@@ -77,34 +77,70 @@ class Unit {
    */
   constexpr ValueType GetValue() const noexcept { return value_; }
 
+  /**
+   * @~english
+   * Equality operator. Supports units with different ratios.
+   * @param other The unit to compare against.
+   * @return True if equal, false otherwise.
+   */
   template <size_t Num2, size_t Denom2>
   bool operator==(const units<Num2, Denom2>& other) const noexcept {
     using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
     return value_ * s::num == other.GetValue() * s::den;
   }
 
+  /**
+   * @~english
+   * Inequality operator. Supports units with different ratios.
+   * @param other The unit to compare against.
+   * @return True if not equal, false otherwise.
+   */
   template <size_t Num2, size_t Denom2>
   bool operator!=(const units<Num2, Denom2>& other) const noexcept {
     return !(*this == other);
   }
 
+  /**
+   * @~english
+   * Less than operator. Supports units with different ratios.
+   * @param other The unit to compare against.
+   * @return True if less than other, false otherwise.
+   */
   template <size_t Num2, size_t Denom2>
   bool operator<(const units<Num2, Denom2>& other) const noexcept {
     using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
     return value_ * s::num < other.GetValue() * s::den;
   }
 
+  /**
+   * @~english
+   * Greater than operator. Supports units with different ratios.
+   * @param other The unit to compare against.
+   * @return True if greater than other, false otherwise.
+   */
   template <size_t Num2, size_t Denom2>
   bool operator>(const units<Num2, Denom2>& other) const noexcept {
     using s = std::ratio_divide<scale, typename std::decay<decltype(other)>::type::scale>;
     return value_ * s::num > other.GetValue() * s::den;
   }
 
+  /**
+   * @~english
+   * Greater than or equal operator. Supports units with different ratios.
+   * @param other The unit to compare against.
+   * @return True if greater than or equal to other, false otherwise.
+   */
   template <size_t Num2, size_t Denom2>
   bool operator>=(const units<Num2, Denom2>& other) const noexcept {
     return !(*this < other);
   }
 
+  /**
+   * @~english
+   * Less than or equal operator. Supports units with different ratios.
+   * @param other The unit to compare against.
+   * @return True if less than or equal to other, false otherwise.
+   */
   template <size_t Num2, size_t Denom2>
   bool operator<=(const units<Num2, Denom2>& other) const noexcept {
     return !(*this > other);
